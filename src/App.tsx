@@ -1,23 +1,37 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
+import logo from './pl-logo.png';
 import './App.css';
+import { useDispatch } from 'react-redux'
+import { appActions } from './store'
+import Chart from './Chart'
+import { IRequestModel } from './types';
 
 function App() {
+  const dispatch = useDispatch();
+  const [sdata, setSdata] = useState<IRequestModel>({ from: '', to: '' });
+
+  const handleClick = () => {
+    dispatch(appActions.getData(sdata))
+  }
+
+  const getChangeHandler = (name: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSdata(prev => ({
+      ...prev,
+      [name]: event.target.value,
+    }))
+  };
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+        <img src={logo} alt="logo" />
         <p>
-          Edit <code>src/App.tsx</code> and save to reload.
+          Input Dates to get Jobs Statistics
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <input placeholder='From' type='date' onChange={getChangeHandler('from')}/>
+        <input placeholder='To' type='date' onChange={getChangeHandler('to' )}/>
+        <button onClick={handleClick}>Fetch Data</button>
+        <Chart />
       </header>
     </div>
   );
